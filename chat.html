@@ -1,0 +1,224 @@
+<html>
+    <head>
+    <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-database.js"></script> 
+    <script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-storage.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/webcamjs/1.0.26/webcam.min.js"></script>
+    <tittle>CHAT</tittle> 
+    </head>
+    <body>
+    <style>
+        body{
+            background-color: orange;
+        }
+        #s-btn{
+            background-color: cyan;
+        }
+        #se-btn,#u-btn,#r-btn{
+             background-color: pink;
+        }
+        #tp-btn,#d-btn{
+background-color: red;
+        }
+        </style>
+        <button class="btn-danger" id="l-btn" onclick="logout()">Logout</button>
+        <center>
+            <div>
+                <label id="user"></label>
+            </div>
+        </center>
+        <br>
+        <center>
+            <div class="chat" id="output">
+                </div>
+                </center>
+        <br>
+        <br>
+        <center>
+            <input tpe="text" class="form-control" id="send_message" placeholder="Message">
+            <br>
+            <button class="form-group" id="s-btn" >Send message</button>
+    
+        </center>
+        <br>
+        <br>
+        <center>
+          <span>
+      <button onclick="select()" id="se-btn" class="form-group">Upload picture</button>
+          <br>
+          <button id="u-btn" class="form-group">Submit picture</button>
+          <div><img id='myimg'></img>
+          <label id="bytes"></label></div>
+          <input  type="text" id="image_name" class="form-control" placeholder="Enter image name">
+         
+          </center>
+       
+        <script >
+            // Your web app's Firebase configuration
+            const firebaseConfig = {
+    apiKey: "AIzaSyB4eChtCij9NR9x3S-r4Ui9b0BgKmHnTTs",
+    authDomain: "whiteboard-ce1db.firebaseapp.com",
+    databaseURL: "https://whiteboard-ce1db-default-rtdb.firebaseio.com",
+    projectId: "whiteboard-ce1db",
+    storageBucket: "whiteboard-ce1db.appspot.com",
+    messagingSenderId: "870354780829",
+    appId: "1:870354780829:web:3106800316c78838d40a74"
+  };
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+
+
+  user_name= localStorage.getItem("user_name");
+  room_name= localStorage.getItem("room_name");
+
+document.getElementById("user").innerHTML="Welcome_"+user_name+"!"
+
+document.getElementById("s-btn").onclick=function(){
+  alert("Pls upload the image of the issue");
+      message= document.getElementById("send_message").value;
+      firebase.database().ref(room_name).push({
+        name:user_name,
+        message:message,
+        
+        
+      });
+   document.getElementById("send_message").value="";
+      
+}
+window.addEventListener("keydown",my_keydown)
+
+function my_keydown(e){
+  keyPressed = e.keyCode;
+  console.log(keyPressed);
+  if(keyPressed==13){
+    alert("Plese upload the image of the issue");
+      message= document.getElementById("send_message").value;
+      firebase.database().ref(room_name).push({
+        name:user_name,
+        message:message,
+        
+        
+      });
+   document.getElementById("send_message").value="";
+  }
+}
+
+function getData() 
+{ firebase.database().ref("/"+room_name).on('value', function(snapshot)
+ { document.getElementById("output").innerHTML = ""; snapshot.forEach(function(childSnapshot)
+  { childKey  = childSnapshot.key; childData = childSnapshot.val(); if(childKey != "purpose")
+   {
+     firebase_message_id = childKey;
+     message_data = childData;
+
+//Start code
+
+  console.log(firebase_message_id);
+  console.log(message_data);
+  user_name=message_data["name"];
+  message=message_data["message"];
+
+  image=message_data["Image"];
+  image_with_tag="<h4> <button class='form-group' id='r-btn' onclick='retrie(this.id)'>"+'Retrieve picture'+"</button></h3><hr>";
+  name_with_tag="<h4>"+user_name+" </h4>";
+  message_with_tag="<h4 class='message_h4'>"+message+"</h4>";
+
+  row= name_with_tag+ message_with_tag+ image_with_tag;
+  document.getElementById("output").innerHTML +=row;
+  console.log(row)
+//End code
+
+  }
+ }); 
+ });
+ }
+getData();
+
+
+function logout(){
+  localStorage.removeItem("user_name");
+  localStorage.removeItem("room_name");
+  window.location="index.html";
+}
+
+var ImageName, ImageUrl;
+var files=[];
+var reader;
+
+function select(e){
+  var input=document.createElement('input');
+  input.type='file';
+ 
+
+  input.onchange= e=>{
+        files=e.target.files;
+        reader= new FileReader();
+        reader.onload= function(){
+              document.getElementById('myimg').src=reader.result;
+        }
+        reader.readAsDataURL(files[0])
+  }
+  input.click();
+}
+
+
+document.getElementById("u-btn").onclick=function(){
+  ImageName= document.getElementById('image_name').value;
+ 
+  if(ImageName==""){
+    alert("Pls enter image name");
+  }
+ else{
+
+  var uploadTask= firebase.storage().ref('Photo/'+ImageName+'.png').put(files[0]);
+
+  uploadTask.on('state_changed', function(snapshot){
+   var progress= (snapshot.bytesTransferred/ snapshot.totalBytes)*100;
+   document.getElementById('bytes').innerHTML='Upload'+progress+'%';
+  },
+  function(error){
+        alert('error in saving image');
+  },
+
+  function(){
+        uploadTask.snapshot.ref.getDownloadURL().then(function(url){
+              ImageUrl= url;
+       
+            firebase.database().ref('pictures/'+ImageName).set({
+                  Name: ImageName,
+                  Link: ImageUrl
+            });
+          }
+          );
+        alert('Image added successfully');
+       });
+}
+}
+
+function retrie(){
+  alert("Pls wait for sometime");
+  ImageName=document.getElementById("image_name").value;
+  if(ImageName==""){
+    alert("Pls enter the image name in the 2nd text box and click on this button again");
+}
+else{
+  firebase.database().ref('pictures/'+ImageName).on('value',function(snapshot){
+document.getElementById("myimg").src=snapshot.val().Link;
+  });
+}
+}
+
+
+
+
+
+
+
+        </script>
+    </body>
+</html>

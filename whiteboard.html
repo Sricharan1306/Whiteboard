@@ -1,0 +1,65 @@
+<html>
+    <head>
+        <title>Whiteboard</title>
+<script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-database.js"></script> 
+<script src="https://www.gstatic.com/firebasejs/7.15.5/firebase-storage.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script> 
+</head>
+<body>
+    <style>
+        body{
+            background-color: chartreuse;
+        }
+        #myCanvas
+  {
+      border-width:10px;
+    background-color: white;
+      border-style:ridge;
+  }
+  #head{
+      background-color: cadetblue;
+  }
+  #head2{
+      background-color: cornflowerblue;
+  }
+    </style>
+    <center>
+        <p id="head">Whiteboard</p>
+        </center>
+        <button class="btn-danger" id="l-btn" onclick="logout()">Logout</button>
+        <center>
+            <label id="take2"></label>
+            <br>
+            <br>
+    <div class="header" id="white">
+        <canvas id='myCanvas' width='800px' height='400px'></canvas>
+    </div>
+    <br>
+    
+    <span class="show">
+<input type="text" placeholder="Enter color name" class="color" id="color">
+</span>
+<br>
+
+    <br>
+<span>
+<input type="number" placeholder="Enter width of the line" class="width" id="width">
+</span>
+<br>
+<br>
+<span>
+ <button class="btn-danger" id="done">Clear area</button>
+</span>
+<span>
+    <button class="btn-success" id="done3">Live chat</button>   
+</span>
+
+</center>
+</body>
+<script src="whiteboard.js"></script>
+</html>
